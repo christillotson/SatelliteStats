@@ -21,7 +21,7 @@ EPSILON = 1e-10
 
 
 # ---------------------------------------------------------------------------
-# Vegetation Indices
+# Land Vegetation Indices
 # ---------------------------------------------------------------------------
 
 def ndvi(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
@@ -43,12 +43,6 @@ def savi(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
 def msavi(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
     """Modified Soil-Adjusted Vegetation Index."""
     return (2 * B8A + 1 - ((2 * B8A + 1) ** 2 - 8 * (B8A - B4)) ** 0.5) / 2
-
-
-def ndre(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
-    """Normalized Difference Red Edge. (NIR - RedEdge1) / (NIR + RedEdge1)"""
-    return (B8A - B5) / (B8A + B5 + EPSILON)
-
 
 def reci(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
     """Red Edge Chlorophyll Index. (NIR / RedEdge1) - 1"""
@@ -132,14 +126,50 @@ def ri(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
 
 
 # ---------------------------------------------------------------------------
+# Water vegetation
+# ---------------------------------------------------------------------------
+
+def fai(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
+    """Floating Algae Index. NIR - (Red + (SWIR1 - Red) * baseline_slope)
+    Isolates floating vegetation against water background."""
+    baseline = B4 + (B11 - B4) * (0.8 / 1.6)  # wavelength interpolation ~833nm between 665 and 1610
+    return B8A - baseline
+
+def ndre(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
+    """Normalized Difference Red Edge. (NIR - RedEdge) / (NIR + RedEdge)
+    More sensitive than NDVI at low chlorophyll concentrations."""
+    return (B8A - B5) / (B8A + B5 + EPSILON)
+
+def rededge_chlorophyll(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
+    """Red Edge Chlorophyll Index. (NIR / RedEdge) - 1
+    Correlates well with chlorophyll content in algae and aquatic plants."""
+    return (B8A / (B5 + EPSILON)) - 1
+
+def ndwi_aquatic(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
+    """Normalized Difference Water Index. (Green - NIR) / (Green + NIR)
+    Highlights water surface; floating vegetation will deviate positively from open water."""
+    return (B3 - B8A) / (B3 + B8A + EPSILON)
+
+def ci_green(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
+    """Green Chlorophyll Index. (NIR / Green) - 1
+    Widely used for chlorophyll-a estimation in water bodies."""
+    return (B8A / (B3 + EPSILON)) - 1
+
+def ndci(B1, B2, B3, B4, B5, B6, B7, B8A, B9, B11, B12) -> float:
+    """Normalized Difference Chlorophyll Index. (RedEdge - Red) / (RedEdge + Red)
+    Specifically developed for phytoplankton chlorophyll in coastal/inland water."""
+    return (B5 - B4) / (B5 + B4 + EPSILON)
+
+# ---------------------------------------------------------------------------
 # Master list
 # ---------------------------------------------------------------------------
 
 INDICES = [
     ndvi, evi, savi, msavi,
-    ndre, reci, cire, gndvi,
+    reci, cire, gndvi,
     ndwi, mndwi, ndmi,
     nbr, nbr2,
     ndbi, bsi, ui,
     ndsi, ri,
+    fai, ndre, rededge_chlorophyll, ndwi_aquatic, ci_green, ndci
 ]
