@@ -12,7 +12,8 @@ import requests
 COPERNICUS_USER = None
 COPERNICUS_PASS = None
 
-DEFAULT_DOWNLOAD_DIR = Path(os.environ.get("S2_DOWNLOAD_DIR", "data/raw")).resolve()
+#DEFAULT_DOWNLOAD_DIR = Path(os.environ.get("S2_DOWNLOAD_DIR", "data/raw")).resolve()
+DEFAULT_DOWNLOAD_DIR = Path("~/scr10/satellite_stats").expanduser().resolve()
 
 SENTINEL2_BANDS = [
     "B01", "B02", "B03", "B04", "B05", "B06",
