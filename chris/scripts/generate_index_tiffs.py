@@ -5,12 +5,13 @@ Given a directory of Sentinel-2 60m .jp2 band files,
 produces one output GeoTIFF per index defined in Sentinel2Indices.INDICES.
 
 Usage:
-    python generate_index_tiffs.py <scene_dir> [output_dir]
+    python generate_index_tiffs.py <scene_dir> <output_dir> --indices [indices]
 
 Arguments:
     scene_dir    Path to folder containing B01.jp2, B02.jp2, etc.
-    output_dir   (Optional) Directory to write results. Defaults to
-                 an 'indices' folder inside scene_dir.
+    output_dir   Directory to write results. 
+    --indices [indices]  The indices you want to generate for that particular image. Defaults to all of them.
+    
 """
 
 # will need to make some kind of environment to make this work - rasterio especially
@@ -93,4 +94,4 @@ if __name__ == "__main__":
 
     process(scene_directory, output_directory, selected)
 
-# python scripts/generate_index_tiffs.py "C:\S2\S2B_MSIL2A_20240623T154819_N0510_R054_T18SUJ_20240623T195821" "output_tiffs"
+# python scripts/generate_index_tiffs.py "C:\S2\S2B_MSIL2A_20240623T154819_N0510_R054_T18SUJ_20240623T195821" "output_tiffs" --indices evi ndvi etc.

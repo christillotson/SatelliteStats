@@ -75,7 +75,7 @@ def find_band_files(extract_path):
                         band_files[band] = Path(root) / f
     return band_files
 
-def download_images(bbox, start_date, end_date, max_cloud_cover=20, max_results=1):
+def download_images(bbox, start_date, end_date, max_cloud_cover=20, max_results=3):
     print("Logging in...")
     token = get_token()
 
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         print("Usage: python download_images.py min_lon min_lat max_lon max_lat start_date end_date")
         sys.exit(1)
 
-    # python scripts/download_images_modified.py -78 38 -76 39.0 2024-06-01 2024-08-30
+    # python scripts/download_images_modified.py -78 38 -76 39.0 2024-06-01 2024-09-30
     bbox = tuple(float(x) for x in sys.argv[1:5])
     start, end = sys.argv[5], sys.argv[6]
     paths = download_images(bbox, start, end)
