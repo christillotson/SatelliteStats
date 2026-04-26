@@ -209,3 +209,4 @@ __marimo__/
 # Added by Chris
 chris/chris_test_venv/*
 chris/output_tiffs/*
+chris/job_calls_log.csv
