@@ -211,3 +211,9 @@ chris/chris_test_venv/*
 chris/output_tiffs/*
 chris/job_calls_log.csv
 chris/.env
+chris/output
+
+# for when it is all in main directory
+output
+.env
+
