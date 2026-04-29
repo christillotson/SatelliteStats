@@ -17,18 +17,26 @@ set -euo pipefail
 DOWNLOAD_DIR="/sciclone/scr10/gzdata440/cttillotson/indices_download"
 OUTPUT_DIR="/sciclone/scr10/gzdata440/cttillotson/indices_output"
 
-MIN_LON=-118
-MIN_LAT=32
-MAX_LON=-66
-MAX_LAT=49.0
-START_DATE="2024-06-01"
-END_DATE="2024-09-30"
-MAX_RESULTS=100
+MIN_LON=-25
+MIN_LAT=63
+MAX_LON=-13
+MAX_LAT=66.5
+# DATES ARE IN YYYY-MM-DD
+START_DATE="2021-12-25"
+END_DATE="2022-12-25"
+MAX_RESULTS=1
+# max results really shouldn't be higher than ~20 because Copernicus will probably time you out for higher requests. Set lower if you cannot get even this amount
+# if you are hitting the maximum of 20, you probably have too big of a job. Try splitting up your requests into multiple different jobs based on your interest
+# meaning, closer start/end dates, or smaller bounding box area 
 MAX_CLOUD_COVER=10
 
-INDICES="ndvi"
+INDICES=""
+# empty string should do all possible indices
+# multiple would be structured like INDICES="evi ndvi etc"
 
-# current configuration is ~100 low cloud cover ndvi images across the entire continental US
+# current configuration is max 20 low cloud cover ndvi images across the entire continental US, tried 100 but that failed
+# so maybe future implementation will be individual calls of this file, each on specific time / area
+# to prevent timeout
 # ──────────────────────────────────────────────────────────────────────────────
 # ── Credentials ───────────────────────────────────────────────────────────────
 ENV_FILE="${1:-.env}"  # default to .env in current dir, or pass a path as argument
@@ -43,7 +51,7 @@ set +a
 # ──────────────────────────────────────────────────────────────────────────────
 
 ./scripts/make_conda_env.sh
-# uncomment above when run on hpc, just commenting because it takes so long
+# comment above if running multiple times because it deletes and re-creates the env every time
 
 module load miniforge3
 source "$(conda info --base)/etc/profile.d/conda.sh"
