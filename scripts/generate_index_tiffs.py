@@ -5,12 +5,13 @@ Given a directory of Sentinel-2 60m .jp2 band files,
 produces one output GeoTIFF per index defined in Sentinel2Indices.INDICES.
 
 Usage:
-    python generate_index_tiffs.py <scene_dir> [output_dir]
+    python generate_index_tiffs.py <scene_dir> <output_dir> --indices [indices]
 
 Arguments:
     scene_dir    Path to folder containing B01.jp2, B02.jp2, etc.
-    output_dir   (Optional) Directory to write results. Defaults to
-                 an 'indices' folder inside scene_dir.
+    output_dir   Directory to write results. 
+    --indices [indices]  The indices you want to generate for that particular image. Defaults to all of them.
+    
 """
 
 # will need to make some kind of environment to make this work - rasterio especially
@@ -56,7 +57,7 @@ def build_output_profile(src_profile: dict) -> dict:
     )
     return profile
 
-def process(scene_dir: str, output_dir: str) -> None:
+def process(scene_dir: str, output_dir: str, indices=INDICES) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
     print(f"Loading bands from '{scene_dir}'...")
@@ -64,7 +65,7 @@ def process(scene_dir: str, output_dir: str) -> None:
     print(f"  Loaded {len(bands)} bands: {BAND_FILES}")
     out_profile = build_output_profile(profile)
 
-    for index_func in INDICES:
+    for index_func in indices:
         name = index_func.__name__
         out_path = os.path.join(output_dir, f"{name}.tiff")
         print(f"  Computing {name}...", end=" ")
@@ -73,16 +74,24 @@ def process(scene_dir: str, output_dir: str) -> None:
             dst.write(index_array, 1)
         print(f"saved → {out_path}")
 
-    print(f"\nDone. {len(INDICES)} index GeoTIFFs written to '{output_dir}'.")
+    print(f"\nDone. {len(indices)} index GeoTIFFs written to '{output_dir}'.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python generate_index_tiffs.py <scene_dir> [output_dir]")
+        print("Usage: python generate_index_tiffs.py <scene_dir> [output_dir] [--indices ndvi evi ...]")
         sys.exit(1)
 
     scene_directory = sys.argv[1]
-    output_directory = sys.argv[2] if len(sys.argv) >= 3 else os.path.join(scene_directory, "indices")
+    output_directory = sys.argv[2] if len(sys.argv) >= 3 and not sys.argv[2].startswith("--") else os.path.join(scene_directory, "indices")
 
-    process(scene_directory, output_directory)
+    index_map = {fn.__name__: fn for fn in INDICES}
 
-# python scripts/generate_index_tiffs.py "C:\S2\S2B_MSIL2A_20240623T154819_N0510_R054_T18SUJ_20240623T195821" "output_tiffs"
+    if "--indices" in sys.argv:
+        i = sys.argv.index("--indices")
+        selected = [index_map[n] for n in sys.argv[i+1:]]
+    else:
+        selected = INDICES
+
+    process(scene_directory, output_directory, selected)
+
+# python scripts/generate_index_tiffs.py "C:\S2\S2B_MSIL2A_20240623T154819_N0510_R054_T18SUJ_20240623T195821" "output_tiffs" --indices evi ndvi etc.

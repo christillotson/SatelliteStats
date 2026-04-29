@@ -1,9 +1,0 @@
-name: sentinel-hpc
-channels:
-  - conda-forge
-dependencies:
-  - python=3.11
-  - numpy
-  - rasterio
-  - requests
-  - libgdal-jp2openjpeg
