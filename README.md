@@ -104,7 +104,7 @@ All job parameters are set at the top of `pipeline.slurm` and must be specified 
  
 SLURM resource settings are also at the top of the file and should be adjusted to match your cluster's limits and the scale of your job.
 
-**`MAX_RESULTS` should not be more than ~20 scences as Copernicus will likely timeout for higher requests.** Try splitting requests into multiple different jobs based on interests, such as closer start and end dates or smaller bounding box areas.
+**`MAX_RESULTS` should not be more than ~20 scenes as Copernicus will likely timeout for higher requests.** Try splitting requests into multiple different jobs based on interests, such as closer start and end dates or smaller bounding box areas.
 
 ---
 
