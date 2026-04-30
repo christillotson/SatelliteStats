@@ -70,8 +70,8 @@ cd <repo-dir>
 **2. Create a `.env` file with your Copernicus credentials:**
 ```
 # .env
-COPERNICUS_USER=your_username
-COPERNICUS_PASS=your_password
+COPERNICUS_USER='your_username'
+COPERNICUS_PASS='your_password'
 ```
 This file is sourced automatically by `pipeline.slurm`. Never commit it to version control.
 
@@ -138,7 +138,7 @@ Queries the Copernicus Data Space OData catalogue for Sentinel-2 L2A scenes matc
 
 The job folder path is written to `<DOWNLOAD_DIR>/last_job.txt` for use by subsequent steps.
 
-**Bands downloaded:** B01, B02, B03, B04, B05, B06, B07, B08, B8A, B09, B11, B12
+**Bands downloaded:** B01, B02, B03, B04, B05, B06, B07, B8A, B09, B11, B12
 
 ### 3. Log Raw Bands — `log_raw_bands.py`
 Before any processing, captures a full snapshot of each raw band file. Writes a JSON log to `<job_dir>/logs/raw_band_log_<timestamp>.json` containing per-scene and per-band metadata including file size, pixel dimensions, data type, nodata value, resolution, and basic statistics (min, max, mean, std, nodata percentage). Optionally exports a flattened CSV with `--csv`.
@@ -167,7 +167,7 @@ Walks all output GeoTIFFs for the job and writes `outputs_log.csv` inside the jo
 
 ## Available Spectral Indices
 
-All index functions are defined in `Sentinel2Indices.py`. The pipeline uses 11 bands (B01–B12, excluding B08 and B10), all expected as reflectance values in [0, 1].
+All index functions are defined in `Sentinel2Indices.py`. The pipeline uses 11 bands (B01–B12, excluding B08 and B10), all expected as reflectance values in [0, 1]. This file can be modified to add any additional indices.
 
 | Index | Name | Primary Use |
 |---|---|---|
@@ -195,7 +195,7 @@ All index functions are defined in `Sentinel2Indices.py`. The pipeline uses 11 b
 | `ci_green` | Green Chlorophyll Index | Chlorophyll-a in water bodies |
 | `ndci` | Normalized Difference Chlorophyll Index | Phytoplankton in coastal/inland water |
 
-To run a subset of indices, set the `INDICES` variable in `pipeline.slurm`:
+To run a subset of indices, set the `INDICES` variable in `pipeline.slurm` accordingly:
 ```
 INDICES="ndvi evi nbr"
 ```
